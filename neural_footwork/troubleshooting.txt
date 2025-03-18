@@ -1,0 +1,69 @@
+NEURAL FOOTWORK TROUBLESHOOTING GUIDE - RESOLVED ISSUES
+
+FIXED ERRORS (✓):
+
+1. "warning: ch1-out~: multiply defined", "ch2-out~: multiply defined", etc.
+   - CAUSE: Multiple objects trying to send to the same receive name
+   - FIX APPLIED: Renamed send objects in neural_mixer.pd and neural_mixer_enhanced.pd:
+     * neural_mixer.pd: Renamed to [s~ mixer-ch1-out~], [s~ mixer-ch2-out~], etc.
+     * neural_mixer_enhanced.pd: Renamed to [s~ ambient-ch1-out~], [s~ hihat-ch2-out~], etc.
+     * Updated corresponding receive objects to match
+
+2. "audio signal outlet connected to nonsignal inlet (ignored)"
+   - CAUSE: Trying to connect an audio signal (ending with ~) to a control inlet
+   - FIX APPLIED: In hihat_v2.pd:
+     * Fixed connection direction between noise~ and *~ objects
+     * Connected noise~ outputs to signal inlets of *~ objects
+     * Added proper line~ objects as envelopes
+
+3. "noise~: no method for 'bang'"
+   - CAUSE: Bangs being sent directly to [noise~] objects which don't accept bangs
+   - FIX APPLIED:
+     * hihat_v2.pd: Connected triggers to line~ objects, then to *~ objects, with noise~ connecting to signal inlets
+     * snare_v2.pd: Added [metro 1] to feed the noise~ object continuously
+     * tom_v2.pd: Added trigger objects to properly handle note generation
+
+STILL NEEDED FOR AUDIO ISSUES:
+
+1. "error opening audio: Internal PortAudio error"
+   - CAUSE: Audio device configuration issue
+   - FIX: In Pure Data, go to Media > Audio Settings:
+     * Try a different audio driver (ASIO, CoreAudio, DirectSound)
+     * Increase buffer size to 256 or 512
+     * Set sample rate to match your system (usually 44100 or 48000)
+     * Try a different output device if available
+
+PATCH LOADING GUIDE:
+
+1. First open neural_footwork_v2.pd (main patch)
+2. Check Media > Audio Settings to ensure your audio device is configured correctly
+3. If you see "compute audio" toggle in main patch, click it to enable DSP
+4. For MIDI control, connect your Digitakt or other MIDI controller and check Media > MIDI Settings
+
+If you encounter any other issues, consult the README.txt for full system instructions.
+
+QUICK FIX STEPS:
+
+1. AUDIO SETUP:
+   - Open Pure Data
+   - Go to Media > Audio Settings
+   - Choose a different driver or increase buffer size
+   - Click "Apply" and "OK"
+
+2. DUPLICATE SIGNAL ERROR:
+   - Open neural_footwork_v2.pd
+   - Look for multiple [s~ ch2-out~] and [s~ ch3-out~] objects
+   - Rename duplicates to [s~ ch2-out-alt~] etc.
+   - Update any corresponding [r~ ch2-out~] to match
+
+3. NOISE~ BANG ERRORS:
+   - Open hihat_v2.pd and snare_v2.pd
+   - Find where bangs connect directly to noise~ objects
+   - Add a [t b] in between that connects to [metro 1]
+   - Connect the metro to noise~
+
+If these steps don't resolve the issues, try running the "v1" version from the original neural_footwork.pd file which might have a simpler configuration with fewer potential conflicts.
+
+NOTE: The noise~ error happens because the drum generators are trying to trigger noise generators with bangs, but noise~ only accepts signal inputs.
+
+Need more help? Contact support with details of your specific Pure Data version and operating system.

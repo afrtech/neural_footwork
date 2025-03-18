@@ -1,0 +1,178 @@
+#N canvas 366 25 850 600 10;
+#X obj 100 20 inlet;
+#X obj 100 550 outlet~;
+#X obj 100 520 s~ hihat-ch2-out~;  ; Send to other instruments for cross-feedback
+#X obj 140 19 inlet feedback_gain;
+#X obj 260 20 inlet steps;
+#X obj 340 20 inlet fills;
+#X obj 420 20 inlet~ neural;
+#X obj 100 80 t b b;
+#X obj 180 50 / 127;
+#X obj 180 80 * 0.9;
+#X obj 106 106 s \$0-feedback-gain;
+#X obj 221 48 s \$0-euclid-steps;
+#X obj 340 50 s \$0-euclid-fills;
+#X obj 63 140 dna_sequencer;
+#X obj 100 170 sel 1 2 3 4;
+#X obj 100 200 t b;
+#X obj 130 200 t b;
+#X obj 160 200 t b;
+#X obj 190 200 t b;
+#X obj 34 230 safe_noise; ; Using safe noise abstraction to prevent bang errors
+#X obj 86 230 safe_noise; ; Using safe noise abstraction to prevent bang errors
+#X obj 131 230 safe_noise; ; Using safe noise abstraction to prevent bang errors 
+#X obj 174 230 safe_noise; ; Using safe noise abstraction to prevent bang errors
+#X obj 49 258 lop~ 10000;0;      ; envelope for noise~ 1
+#X obj 115 258 lop~ 8000;0;      ; envelope for noise~ 2
+#X obj 171 258 lop~ 6000;50;     ; envelope for noise~ 3
+#X obj 231 258 lop~ 4000;50;     ; envelope for noise~ 4
+#X obj 39 291 hip~ 5000;         ; multiply envelope to noise~ 1 signal
+#X obj 103 289 hip~ 4000;        ; multiply envelope to noise~ 2 signal
+#X obj 164 290 hip~ 3000;        ; multiply envelope to noise~ 3 signal
+#X obj 226 287 hip~ 2000;        ; multiply envelope to noise~ 4 signal
+#X obj 70 320 *~ 0.3;000;
+#X obj 115 317 *~ 0.4;00;
+#X obj 159 320 *~ 0.5;00;
+#X obj 231 258 lop~ 4000;
+#X obj 39 291 hip~ 5000;
+#X obj 103 289 hip~ 4000;
+#X obj 164 290 hip~ 3000;
+#X obj 226 287 hip~ 2000;
+#X obj 70 320 *~ 0.3;
+#X obj 115 317 *~ 0.4;
+#X obj 159 320 *~ 0.5;
+#X obj 200 320 *~ 0.6;
+#X obj 100 350 +~;
+#X obj 140 350 +~;
+#X obj 100 380 *~ 0.8;
+#X obj 100 410 clip~ -0.6 0.6;
+#X obj 100 440 neuron;
+#X obj 134 497 r \$0-feedback-gain;
+#X obj 255 471 r \$0-threshold-value;
+#X obj 450 50 *~ 0.8;
+#X obj 445 81 clip~ -0.8 0.8;
+#X obj 464 101 *~ 0.3;
+#X obj 527 146 +~ 0.5;
+#X obj 420 170 *~;
+#X obj 500 170 r \$0-dna-mutation;
+#X obj 420 200 s~ \$0-density;
+#X obj 510 20 inlet fractal;
+#X obj 500 50 sel 1;
+#X obj 534 82 s \$0-fractal-mode;
+#X obj 204 125 r \$0-fractal-mode;
+#X obj 603 18 inlet dna_mutation;
+#X obj 580 50 / 127;
+#X obj 650 79 * 100;
+#X obj 635 110 s \$0-dna-mutation;
+#X obj 549 344 r~ \$0-density;
+#X obj 450 380 *~ 0.6;
+#X obj 450 410 +~ 0.3;
+#X obj 400 350 r~ inhibit_hihat;
+#X obj 400 380 *~ 0.5;
+#X obj 400 410 *~ -1;
+#X obj 400 440 +~ 1;
+#X obj 400 470 *~;
+#X obj 400 500 s~ \$0-gate;
+#X obj 217 410 r~ \$0-gate;
+#X obj 150 440 *~ 0.9;
+#X obj 228 78 r \$0-dna-mutation;
+#X obj 225 101 s \$0-mutation-rate;
+#X obj 250 166 r \$0-mutation-rate;
+#X obj 336 77 r \$0-euclid-steps;
+#X obj 337 121 s \$0-pattern-length;
+#X obj 229 145 r \$0-pattern-length;
+#X obj 294 257 r~ ambient-ch1-out~;  ; Receive from ambient channel
+#X obj 389 260 r~ tom-ch4-out~;  ; Receive from tom channel
+#X obj 292 289 *~ 0.2;
+#X obj 356 288 *~ 0.3;
+#X obj 249 321 s~ hihat-feedback1~;
+#X connect 3 0 10 0;
+#X connect 4 0 11 0;
+#X connect 5 0 41 0;
+#X connect 6 0 12 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 12 0 13 0;
+#X connect 13 0 14 0;
+#X connect 13 1 15 0;
+#X connect 13 2 16 0;
+#X connect 13 3 17 0;
+; ---- Fixed noise~ connections ----
+; Direct connections to safe_noise abstraction, which handles bangs internally
+#X connect 14 0 18 0;  ; Sequencer trigger 1 → safe_noise 1
+#X connect 15 0 19 0;  ; Sequencer trigger 2 → safe_noise 2
+#X connect 16 0 20 0;  ; Sequencer trigger 3 → safe_noise 3
+#X connect 17 0 21 0;  ; Sequencer trigger 4 → safe_noise 4
+#X connect 22 0 26 0;
+#X connect 23 0 27 0;
+#X connect 24 0 28 0;
+#X connect 25 0 29 0;
+#X connect 26 0 30 0;
+#X connect 27 0 31 0;
+#X connect 28 0 32 0;
+#X connect 29 0 33 0;
+#X connect 30 0 34 0;
+#X connect 31 0 34 1;
+#X connect 32 0 35 0;
+#X connect 33 0 35 1;
+#X connect 34 0 36 0;
+#X connect 35 0 36 1;
+#X connect 36 0 37 0;
+#X connect 37 0 38 0;
+#X connect 38 0 1 0;
+#X connect 38 0 3 0;  ; Connect to the send object too
+#X connect 39 0 38 2;
+#X connect 40 0 38 3;
+#X connect 41 0 42 0;
+#X connect 42 0 43 0;
+#X connect 43 0 44 0;
+#X connect 44 0 45 0;
+#X connect 45 0 47 0;
+#X connect 46 0 45 1;
+#X connect 48 0 49 0;
+#X connect 49 0 50 0;
+#X connect 51 0 12 1;
+#X connect 52 0 53 0;
+#X connect 53 0 54 0;
+#X connect 54 0 55 0;
+#X connect 56 0 57 0;
+#X connect 57 0 58 0;
+#X connect 58 0 12 2;
+#X connect 59 0 60 0;
+#X connect 60 0 61 0;
+#X connect 61 0 62 0;
+#X connect 62 0 63 0;
+#X connect 63 0 64 0;
+#X connect 65 0 66 0;
+#X connect 66 0 38 1;
+#X connect 67 0 68 0;
+#X connect 69 0 12 1;
+#X connect 70 0 71 0;
+#X connect 72 0 12 2;
+#X connect 73 0 75 0;
+#X connect 74 0 76 0;
+#X connect 75 0 77 0;
+#X connect 76 0 78 0;
+; ---- Amplitude Control System ----
+#X obj 34 200 line~ 0 1 50;  ; Envelope for noise~ 1
+#X obj 86 200 line~ 0 1 50;  ; Envelope for noise~ 2
+#X obj 131 200 line~ 0 1 50; ; Envelope for noise~ 3
+#X obj 174 200 line~ 0 1 50; ; Envelope for noise~ 4
+#X obj 34 250 *~;            ; Multiply envelope with noise~ 1
+#X obj 86 250 *~;            ; Multiply envelope with noise~ 2
+#X obj 131 250 *~;           ; Multiply envelope with noise~ 3
+#X obj 174 250 *~;           ; Multiply envelope with noise~ 4
+
+; ---- Update Connections ----
+#X connect 14 0 100 0;  ; Sequencer trigger 1 → line~ 1
+#X connect 15 0 101 0;  ; Sequencer trigger 2 → line~ 2
+#X connect 16 0 102 0;  ; Sequencer trigger 3 → line~ 3
+#X connect 17 0 103 0;  ; Sequencer trigger 4 → line~ 4
+#X connect 100 0 104 0; ; line~ 1 → *~ 1
+#X connect 101 0 105 0; ; line~ 2 → *~ 2
+#X connect 102 0 106 0; ; line~ 3 → *~ 3
+#X connect 103 0 107 0; ; line~ 4 → *~ 4
+#X connect 18 0 104 1;  ; noise~ 1 → *~ 1 (signal inlet)
+#X connect 19 0 105 1;  ; noise~ 2 → *~ 2 (signal inlet)
+#X connect 20 0 106 1;  ; noise~ 3 → *~ 3 (signal inlet)
+#X connect 21 0 107 1;  ; noise~ 4 → *~ 4 (signal inlet)

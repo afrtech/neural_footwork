@@ -1,0 +1,60 @@
+Connection Check Guide for Neural Footwork v2:
+
+CRITICAL FIXES APPLIED:
+
+1. NOISE~ OBJECTS NOT ACCEPTING BANGS
+   - Problem: Bangs were being sent directly to noise~ objects in hihat_v2.pd and snare_v2.pd
+   - Fix: Added line~ or metro objects in between to properly convert control flow to signal flow
+   - Details:
+     * In hihat_v2.pd: Connected sequencer bangs to line~ objects, then connected noise~ to *~ objects correctly
+     * In snare_v2.pd: Added metro 1 to feed the noise~ object continuously
+
+2. DUPLICATE SIGNAL NAME WARNINGS
+   - Problem: Multiple objects sending to same signal names (ch1-out~, ch2-out~, etc.)
+   - Fix: Renamed send objects in neural_mixer_enhanced.pd to use channel-specific prefixes
+   - Details:
+     * ch1-out~ renamed to ambient-ch1-out~
+     * ch2-out~ renamed to hihat-ch2-out~
+     * ch3-out~ renamed to snare-ch3-out~
+     * ch4-out~ renamed to tom-ch4-out~
+     * Corresponding receive objects also updated
+
+3. SIGNAL CONNECTION MISMATCHES
+   - Problem: Audio signal outlets connected to non-signal inlets
+   - Fix: Corrected connection directions in hihat_v2.pd
+   - Details:
+     * Connected noise~ outputs to *~ signal inlets
+     * Fixed reversed connections where control signals were being sent to signal objects
+
+REMAINING RECOMMENDATIONS:
+
+1. SIGNAL GENERATION:
+   - Each channel (ambient_v2, hihat_v2, snare_v2, tom_v2) should output to both:
+     a) throw~ ch1, ch2, etc. (for mixer routing)
+     b) s~ neural1~, neural2~, etc. (for neural feedback)
+
+2. MIXER ROUTING:
+   - neural_mixer_enhanced should:
+     a) Receive catch~ ch1-4 inputs
+     b) Process through mute controls
+     c) Process through brainmix for spatial stereo
+     d) Send to gen_fx processor
+
+3. EFFECTS ROUTING:
+   - gen_fx should:
+     a) Process the audio from mixer
+     b) Send to export_rack for sampling
+     c) Send to final output processing (clip/hip~/etc.)
+
+4. OUTPUT CHAIN:
+   - Check that export_rack outputs connect nowhere (they're just for saving files)
+   - Ensure main outputs from gen_fx connect to *~ -> clip~ -> hip~ -> dac~
+
+5. NEURAL FEEDBACK:
+   - Verify r~ neural1~ etc. are connected to:
+     a) inhibit signals (via threshold~ etc.)
+     b) cortex processing in brain
+     c) effects modulation
+
+If everything is correctly connected, the final output should reflect all four channels
+properly mixed and processed through the effects chain.
